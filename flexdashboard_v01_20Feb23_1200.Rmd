@@ -1,0 +1,110 @@
+---
+title: "USA milk cow facts."
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    theme : yeti
+    vertical_layout: fill
+    runtime: shiny
+---
+
+
+```{r setup, include=FALSE}
+
+# File name flexdashboard_vo1_20Feb23_1200  - removes it from the dashboard title line. 
+
+# start up - create a Rstudio New File : R Markdown 
+# In the new window choose From Template on left 
+# then choose Flex Dashboard to generate this file 
+# to get the Run Document on the third line use Addins : Run a Test File and it appears 
+# now when click on 'Run Document' get the new window with my dashboard lay out 
+
+rm(list = ls())
+
+# load packages ----
+library(tidyverse)
+library(shiny)
+library(plotly)
+library(viridis)
+library(flexdashboard)
+
+# as this is stand alone need to set wd, get database and data wrangle if needed 
+# want milk_facts, load version with new units created earlier 
+
+setwd("C:/ATC_data/Harper_adams PGCert/C7083/Assignment")
+
+milkcow_facts = read_csv("milkcow_facts_new_units.csv") # all numeric and continuous 
+
+attach(milkcow_facts) # as cannot alter legend or axis labels in flexdashboard
+
+# check data has been loaded and renamed - does not seem to be an 'output' for these commands 
+# names(milkcow_facts)
+
+```
+
+Sidebar {.sidebar data-width=350} 
+-----------------------------------------------------------------------
+
+This dashboard explores the `milkcow_facts` dataset in this assignment. It was created with **R Studio**'s package `flexdashboard`. 
+
+There are two graphs that can be used to explore the data relationships. 
+
+**Scatterplots**
+
+Choose which variable to plot over the years 1980 to 2014. This will show the changes over time with a 95% standard error and the long term trend (dotted line)  
+
+```{r inputs1}
+
+selectInput("parameter", "Choose variable to plot and assess over time", choices = names(milkcow_facts), selected = "milk_per_cow_kg")
+
+```
+
+**Relationship between variables**
+
+To investigate interactions choose variables to plot on the x axis and the y axis. The results are colour coded by year with the older years in blue through to the more recent years being in the yellow range. 
+
+```{r inputs2}
+
+selectInput("x", "Relationships: select variable on x axis", choices = names(milkcow_facts), selected = "milk_per_cow kg")
+
+selectInput("y", "Relationships: select variable on y axis", choices = names(milkcow_facts), selected = "milk_per_cow kg")
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Changes over time (1980 to 2014)
+
+```{r scatterplot}
+renderPlotly({
+  p1 <- milkcow_facts %>% ggplot(aes_string(x = milkcow_facts$year, y = input$parameter)) + 
+    geom_point(size = 1.5, alpha = 0.95, pch = 15, colour="goldenrod") +
+    theme_minimal() + 
+    geom_smooth(method = "loess", span = 0.35, position = "identity", se = "True",fill = "goldenrod") + 
+    geom_smooth(method = "lm", se = FALSE,color = "dark goldenrod", linetype = "dashed") + 
+    labs(x = "Year", y = input$parameter)
+  
+  p1 %>% ggplotly()
+})
+```
+
+### Changes in relationship between variables (1980 to 2014)
+
+```{r}
+renderPlotly({
+  p2 <- milkcow_facts %>% ggplot(aes_string(x = input$x, y = input$y)) + 
+    geom_point(size = 2.5, alpha = 0.95, pch = 15, aes(color=year)) +
+    geom_smooth(method = "loess", se = TRUE, span = 0.5, fill = "goldenrod",  position = "identity") + 
+    scale_colour_viridis() + 
+    theme_minimal() +
+    labs(x = input$x, y = input$y) +
+    theme(legend.title = element_blank()) # it does not seem possible to set the legend text so attach the database 
+ 
+      p2 %>% ggplotly()
+})
+
+```
+
+
+

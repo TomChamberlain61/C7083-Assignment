@@ -1,0 +1,14 @@
+Column number,Name,Type
+1, year                                   ,num
+2, avg_milk_cow_number_thousands          ,num
+3, milk_per_cow_kg                        ,num
+4, milk_production_billion_kg             ,num
+5, avg_price_milk_D_per_kg                ,num
+6, dairy_ration_price_D_per_kg            ,num
+7, milk_feed_price_ratio                  ,num
+8, milk_cow_cost_per_animal               ,num
+9, milk_volume_to_buy_cow_in_kgs          ,num
+10, alfalfa_hay_price_D/kg                 ,num
+11, slaughter_cow_price_D_per_kg_liveweight,num
+12, milk_billions_kg_delta                 ,num
+13, lagged_milk_price                      ,num

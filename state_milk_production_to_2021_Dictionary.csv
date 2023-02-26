@@ -1,0 +1,6 @@
+﻿Column number,Name,Type
+1, region                   , chr 
+2, state                    , chr
+3, year                     , num
+4, milk_produced_millions_kg, num
+5, Million Tonnes           , num
